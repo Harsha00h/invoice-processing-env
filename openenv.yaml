@@ -1,0 +1,60 @@
+name: invoice-processing-env
+version: "0.1.0"
+description: >
+  An environment where an AI agent learns to process invoices: extracting fields,
+  matching to purchase orders, and handling complex scenarios like partial deliveries,
+  currency conversions, and duplicate detection.
+
+tasks:
+  - id: easy
+    name: Invoice Field Extraction
+    description: >
+      Extract key fields (vendor name, total amount, date, invoice number) from
+      structured invoice text. Return a JSON object with the extracted fields.
+    difficulty: easy
+    max_attempts: 5
+
+  - id: medium
+    name: Invoice-PO Matching
+    description: >
+      Match an invoice to the correct purchase order from a set of candidates,
+      then flag any mismatches in quantities, unit prices, or line items.
+    difficulty: medium
+    max_attempts: 5
+
+  - id: hard
+    name: Complex Invoice Processing
+    description: >
+      Handle partial deliveries (invoice covers subset of PO lines), perform
+      currency conversions using provided exchange rates, and detect duplicate
+      invoices across different vendors for the same goods/services.
+    difficulty: hard
+    max_attempts: 5
+
+action_space:
+  type: object
+  fields:
+    answer: "JSON string with extracted/processed invoice data"
+    explanation: "Optional reasoning text"
+
+observation_space:
+  type: object
+  fields:
+    invoice_text: "The raw invoice content to process"
+    context: "Additional context (PO data, exchange rates, historical invoices)"
+    task_description: "What the agent must accomplish"
+    task_id: "easy | medium | hard"
+    difficulty: "Difficulty level"
+    attempt_number: "Current attempt count"
+    max_attempts: "Maximum allowed attempts"
+    feedback: "Grader feedback from prior attempt"
+    hint: "Hint revealed after 2 failed attempts"
+    done: "Whether the episode is over"
+    reward: "Score 0.0-1.0"
+
+endpoints:
+  reset: POST /reset
+  step: POST /step
+  state: GET /state
+  health: GET /health
+  tasks: GET /tasks

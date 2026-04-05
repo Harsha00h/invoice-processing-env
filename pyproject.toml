@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "openenv-invoice-processing-env"
+version = "0.1.0"
+requires-python = ">=3.10"
+description = "Invoice processing environment for AI agent training via OpenEnv"
+dependencies = [
+    "openenv-core>=0.1.0",
+    "fastapi>=0.115.0",
+    "pydantic>=2.0.0",
+    "uvicorn>=0.24.0",
+    "requests>=2.31.0",
+    "openai>=1.0.0",
+]
+
+[tool.setuptools.packages.find]
+include = ["server*", "data*"]
