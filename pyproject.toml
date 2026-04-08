@@ -1,6 +1,6 @@
 [build-system]
 requires = ["setuptools>=45", "wheel"]
-build-backend = "setuptools.backends._legacy:_Backend"
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "openenv-invoice-processing-env"
@@ -15,6 +15,9 @@ dependencies = [
     "requests>=2.31.0",
     "openai>=1.0.0",
 ]
+
+[project.scripts]
+server = "server.app:main"
 
 [tool.setuptools.packages.find]
 include = ["server*", "data*"]
