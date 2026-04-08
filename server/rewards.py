@@ -23,8 +23,8 @@ def compute_reward(
         raw_score *= 0.85
         feedback += " | NOTE: Exhaustion penalty applied (0.85x) — max attempts reached."
 
-    # Clamp and round
-    reward = round(max(0.0, min(1.0, raw_score)), 2)
-    is_perfect = reward >= 1.0
+    # Clamp strictly into the open interval (0, 1) — never exactly 0.0 or 1.0
+    reward = round(max(0.01, min(0.99, raw_score)), 2)
+    is_perfect = raw_score >= 1.0
 
     return reward, feedback, is_perfect
