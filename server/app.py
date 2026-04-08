@@ -2,7 +2,7 @@
 
 import os
 import uvicorn
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
 from typing import Optional
 
@@ -50,18 +50,34 @@ def health():
 
 
 @app.post("/reset")
-def reset(request: ResetRequest) -> dict:
-    obs = env.reset(
-        task_id=request.task_id,
-        seed=request.seed,
-        episode_id=request.episode_id,
-    )
+async def reset(request: Request) -> dict:
+    # Accept empty body, missing fields, or full ResetRequest
+    try:
+        body = await request.json()
+    except Exception:
+        body = {}
+    if body is None:
+        body = {}
+    task_id = body.get("task_id", "easy") if isinstance(body, dict) else "easy"
+    seed = body.get("seed") if isinstance(body, dict) else None
+    episode_id = body.get("episode_id") if isinstance(body, dict) else None
+
+    obs = env.reset(task_id=task_id, seed=seed, episode_id=episode_id)
     return obs.model_dump()
 
 
 @app.post("/step")
-def step(request: StepRequest) -> dict:
-    action = InvoiceAction(answer=request.answer, explanation=request.explanation)
+async def step(request: Request) -> dict:
+    try:
+        body = await request.json()
+    except Exception:
+        body = {}
+    if body is None:
+        body = {}
+    answer = body.get("answer", "") if isinstance(body, dict) else ""
+    explanation = body.get("explanation", "") if isinstance(body, dict) else ""
+
+    action = InvoiceAction(answer=answer, explanation=explanation)
     obs = env.step(action)
     return obs.model_dump()
 
